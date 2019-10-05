@@ -1,18 +1,18 @@
+#include <memory>
+
 #include "../include/Header.h"
 
-
 int main(int, char**) {
-    Game *game = new Game();
+    auto game = std::make_unique<Game>();
     game->init();
-    Octopus *oct = new Octopus(game->getRenderer());
+    auto oct = std::make_unique<Octopus>();
 
     while (game->run)
     {
+        SDL_RenderClear(game->getRenderer());
+        oct->draw(game->getRenderer());
         game->handleEvent();
-//        oct->draw();
-        SDL_RenderPresent(game->getRenderer());
     }
-    game->clean();
 
     return 0;
 }

@@ -5,7 +5,7 @@ SOURCES = source/main.cpp source/Game.cpp source/Octopus.cpp
 
 OBJECTS = $(SOURCES:.cpp=.o)
 
-FLAGS = -framework OpenGL -framework AppKit
+FLAGS = -framework OpenGL -framework AppKit -std=c++14
 
 INCLUDES = 		-I frameworks/SDL2.framework/Versions/A/Headers \
 				-I frameworks/SDL2_ttf.framework/Versions/A/Headers \

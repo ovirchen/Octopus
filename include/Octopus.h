@@ -11,10 +11,10 @@ class Octopus {
 
 public:
 
-    Octopus(SDL_Renderer *renderer);
+    Octopus();
     ~Octopus();
 
-    void draw();
+    void draw(SDL_Renderer *renderer);
     void pushOff();
     void jump();
     void landing();
@@ -22,11 +22,11 @@ public:
 
 
 private:
-    int             x;
-    int             y;
+    int             x{0};
+    int             y{0};
     int             w;
     int             h;
-    SDL_Texture*    texture;
+    SDL_Surface     *image;
     int             frames;
     std::string     path;
 };

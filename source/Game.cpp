@@ -7,25 +7,30 @@
 Game::Game() {
     run = true;
 }
-Game::~Game() {}
+Game::~Game() {
+    SDL_DestroyTexture(texture);
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(win);
+    SDL_Quit();
+    IMG_Quit();
+    cout << "GamE OveR\n";
+}
 
 void Game::init()
 {
     try {
         if ((SDL_Init(SDL_INIT_VIDEO) == -1) || (IMG_Init(IMG_INIT_PNG) == -1) ||
-        (this->win = SDL_CreateWindow("Octopus", 0, 0, WIN_X, WIN_Y, SDL_WINDOW_SHOWN)) == NULL)
+        (win = SDL_CreateWindow("Octopus", 0, 0, WIN_X, WIN_Y, SDL_WINDOW_SHOWN)) == NULL)
             throw SDLException();
-        if ((this->renderer = SDL_CreateRenderer(this->win, -1,
+        if ((renderer = SDL_CreateRenderer(win, -1,
                 SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC)) == NULL)
             throw SDLException();
         SDL_SetRenderDrawColor(renderer, 70, 130, 180, 255);
-        if ((this->texture = SDL_CreateTexture(this->renderer, SDL_PIXELFORMAT_RGB888,
+        if ((texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGB888,
                 SDL_TEXTUREACCESS_TARGET, WIN_X, WIN_Y)) == NULL)
             throw SDLException();
-//        this->image = (unsigned int *)malloc(sizeof(unsigned int) *
-//                                            (WIN_X * WIN_Y + 1));
 
-        cout << "INIT EVERYTHING\n";
+        std::cout << "INIT EVERYTHING" << std::endl;
 
     }
     catch (SDLException e)
@@ -37,20 +42,21 @@ void Game::init()
 
 void Game::handleEvent()
 {
-    if (SDL_PollEvent(&(this->event)))
+    while(SDL_PollEvent(&event))
     {
-        if (this->event.type == SDL_QUIT ||
-                (this->event.type == SDL_KEYDOWN && this->event.key.keysym.sym == SDLK_ESCAPE))
-            this->run = false;
-        if (this->event.button.type == SDL_MOUSEBUTTONDOWN && this->event.button.button == SDL_BUTTON_LEFT)
+        if (event.type == SDL_QUIT ||
+                (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE))
+            run = false;
+        if (event.button.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT)
         {
-            this->mouseX = 0;
-            this->mouseY = 0;
+            mouseX = 0;
+            mouseY = 0;
             SDL_GetMouseState(&mouseX, &mouseY);
             cout << "MOUSE " << mouseX << " " << mouseY << "\n";
         }
     }
 }
+
 void Game::update(){}
 void Game::render()
 {
@@ -58,19 +64,9 @@ void Game::render()
 
     SDL_RenderPresent(renderer);
 }
-void Game::clean()
-{
-//    free(this->image);
-    SDL_DestroyTexture(this->texture);
-    SDL_DestroyRenderer(this->renderer);
-    SDL_DestroyWindow(this->win);
-    SDL_Quit();
-    IMG_Quit();
-    cout << "GamE OveR\n";
-}
 
 SDL_Renderer* Game::getRenderer() {
-    return this->renderer;
+    return renderer;
 }
 
 

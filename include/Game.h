@@ -20,7 +20,6 @@ public:
     void handleEvent();
     void update();
     void render();
-    void clean();
     SDL_Renderer *getRenderer();
 
     class SDLException: public std::exception
