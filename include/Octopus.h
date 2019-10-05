@@ -14,22 +14,28 @@ public:
     Octopus();
     ~Octopus();
 
-    void draw(SDL_Renderer *renderer);
-    void pushOff();
-    void jump();
-    void landing();
-    void checkPosition(int xMap, int yMap);
+    void    setRenderer(SDL_Renderer *render);
+    int     getPosX();
+    int     getPosY();
+    void    update(int destX, int destY);
+    void    draw();
+    void    move(int i, int len, double x, double y);
+    void    pushOff(double x, double y);
+    void    jump();
+    void    landing(double x, double y);
+    void    checkPosition(int xMap, int yMap);
 
 
 private:
-    int             x{0};
-    int             y{0};
-    int             w;
-    int             h;
+    double             pos_x{0};
+    double             pos_y{0};
+    double             dest_x;
+    double             dest_y;
+    int             width;
+    int             height;
     SDL_Surface     *image;
-    int             frames;
-    std::string     path;
+    SDL_Rect        srcRect, destRect;
+    SDL_Renderer    *renderer;
 };
-
 
 #endif //OCTOPUS_OCTOPUS_H

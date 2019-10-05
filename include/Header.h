@@ -5,8 +5,8 @@
 #ifndef OCTOPUS_HEADER_H
 #define OCTOPUS_HEADER_H
 
-#define WIN_X 1024
-#define WIN_Y 768
+#define WIN_X 1920
+#define WIN_Y 1080
 #define PI 3.141592
 
 #include "../frameworks/SDL2.framework/Headers/SDL.h"
@@ -15,9 +15,11 @@
 #include <iostream>
 #include <string>
 #include <cstdio>
+#include <memory>
+#include <cmath>
 
-#include "Game.h"
 #include "Octopus.h"
+#include "Game.h"
 
 
 using namespace std;

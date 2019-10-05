@@ -6,6 +6,9 @@
 
 Game::Game() {
     run = true;
+    oct = std::make_unique<Octopus>();
+    mouseX = oct->getPosX();
+    mouseY = oct->getPosY();
 }
 Game::~Game() {
     SDL_DestroyTexture(texture);
@@ -13,29 +16,28 @@ Game::~Game() {
     SDL_DestroyWindow(win);
     SDL_Quit();
     IMG_Quit();
-    cout << "GamE OveR\n";
+    cout << "WINDOW CLEARED\n";
 }
 
 void Game::init()
 {
     try {
-        if ((SDL_Init(SDL_INIT_VIDEO) == -1) || (IMG_Init(IMG_INIT_PNG) == -1) ||
+        if ((SDL_Init(SDL_INIT_VIDEO) < 0) || (IMG_Init(IMG_INIT_PNG) < 0) ||
         (win = SDL_CreateWindow("Octopus", 0, 0, WIN_X, WIN_Y, SDL_WINDOW_SHOWN)) == NULL)
-            throw SDLException();
+            throw std::exception();
         if ((renderer = SDL_CreateRenderer(win, -1,
                 SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC)) == NULL)
-            throw SDLException();
+            throw std::exception();
         SDL_SetRenderDrawColor(renderer, 70, 130, 180, 255);
         if ((texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGB888,
                 SDL_TEXTUREACCESS_TARGET, WIN_X, WIN_Y)) == NULL)
-            throw SDLException();
-
+            throw std::exception();
+        oct->setRenderer(renderer);
         std::cout << "INIT EVERYTHING" << std::endl;
-
     }
-    catch (SDLException e)
+    catch (std::exception e)
     {
-        cout << SDL_GetError();
+        cout << SDL_GetError() << std::endl;
     }
 
 }
@@ -49,35 +51,25 @@ void Game::handleEvent()
             run = false;
         if (event.button.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT)
         {
-            mouseX = 0;
-            mouseY = 0;
             SDL_GetMouseState(&mouseX, &mouseY);
             cout << "MOUSE " << mouseX << " " << mouseY << "\n";
         }
     }
 }
 
-void Game::update(){}
+void Game::update(){
+
+}
 void Game::render()
 {
-    SDL_RenderClear(renderer);
+//    cout << "\trender\n";
+//    SDL_RenderClear(renderer);
+    oct->update(mouseX, mouseY);
+    oct->draw();
 
-    SDL_RenderPresent(renderer);
+//    SDL_RenderPresent(renderer);
 }
 
 SDL_Renderer* Game::getRenderer() {
     return renderer;
 }
-
-
-Game::SDLException::SDLException() {}
-Game::SDLException::SDLException(SDLException const &src) { *this = src; }
-Game::SDLException::~SDLException() throw() { }
-Game::SDLException& Game::SDLException::operator=(SDLException const &src) {
-    std::exception::operator=(src);
-    return *this;
-}
-char const* Game::SDLException::what() const throw() {
-    return ("SDL ERROR\n");
-}
-

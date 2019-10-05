@@ -7,6 +7,8 @@
 
 #include "Header.h"
 
+class Octopus;
+
 
 class Game {
 
@@ -22,18 +24,6 @@ public:
     void render();
     SDL_Renderer *getRenderer();
 
-    class SDLException: public std::exception
-    {
-    public:
-        SDLException();
-        SDLException(SDLException const &src);
-        ~SDLException() throw();
-        SDLException &operator=(SDLException const &src);
-
-        char const *what() const throw();
-    };
-
-
 private:
     int                 mouseX;
     int                 mouseY;
@@ -41,7 +31,7 @@ private:
     SDL_Renderer	    *renderer;
     SDL_Texture		    *texture;
     SDL_Event		    event;
-    unsigned int	    *image;
+    std::unique_ptr<Octopus> oct;
 
 
 };
