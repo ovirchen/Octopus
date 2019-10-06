@@ -28,7 +28,7 @@ void Game::init()
         if ((renderer = SDL_CreateRenderer(win, -1,
                 SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC)) == NULL)
             throw std::exception();
-        SDL_SetRenderDrawColor(renderer, 70, 130, 180, 255);
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
         if ((texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGB888,
                 SDL_TEXTUREACCESS_TARGET, WIN_X, WIN_Y)) == NULL)
             throw std::exception();

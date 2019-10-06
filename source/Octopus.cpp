@@ -58,7 +58,7 @@ void Octopus::move(int i, int len, double x, double y)
 {
 //    cout << "\tmove\n";
     const int   FPS = 60;
-    int         FD = 5000;
+    int         FD = 500;
     int         frameDelay = FD / FPS;
     Uint32      frameStart;
     int         frameTime;
@@ -76,11 +76,12 @@ void Octopus::move(int i, int len, double x, double y)
         pos_x += x;
         draw();
 
+        FD += 500 * i;
+        frameDelay = FD / FPS;
         frameTime = SDL_GetTicks() - frameStart;
         if (frameDelay > frameTime)
             SDL_Delay(frameDelay - frameTime);
-        frameDelay = FD / FPS;
-        FD += 2000 * i;
+
     }
 
 }
@@ -92,19 +93,27 @@ void Octopus::pushOff(double x, double y)
     Uint32      frameStart;
     int         frameTime;
     const int   len = 3;
+    std::string str;
 
-    int i = -1;
+    int i = 0;
     x = x / len;
     y = y / len;
-    while (++i < len) {
+    while (++i <= len) {
         frameStart = SDL_GetTicks();
+
+        str = "./Assets/img/00" + std::to_string(10 * i) + ".png";
+        SDL_FreeSurface(image);
+        image = IMG_Load(str.c_str());
         pos_y += y;
         pos_x += x;
         draw();
+
         frameTime = SDL_GetTicks() - frameStart;
         if (frameDelay > frameTime)
             SDL_Delay(frameDelay - frameTime);
     }
+    SDL_FreeSurface(image);
+    image = IMG_Load(R"(./Assets/img/0040.png)");
 
 //    cout << "\tpushOff\n";
 //    int frames = 6;
@@ -192,15 +201,21 @@ void Octopus::landing(double x, double y) {
     Uint32      frameStart;
     int         frameTime;
     const int   len = 3;
+    std::string str;
 
     int i = -1;
     x = x / len;
     y = y / len;
     while (++i < len) {
         frameStart = SDL_GetTicks();
+
+        str = "./Assets/img/00" + std::to_string(45 + 5 * i) + ".png";
+        SDL_FreeSurface(image);
+        image = IMG_Load(str.c_str());
         pos_y += y;
         pos_x += x;
         draw();
+
         frameTime = SDL_GetTicks() - frameStart;
         if (frameDelay > frameTime)
             SDL_Delay(frameDelay - frameTime);

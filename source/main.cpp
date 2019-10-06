@@ -7,14 +7,14 @@ int main(int, char**) {
 //    const int   frameDelay = 10000 / FPS;
 //    Uint32      frameStart;
 //    int         frameTime;
-    int count = 0;
+//    int count = 0;
 
     auto game = std::make_unique<Game>();
     game->init();
 
     while (game->run)
     {
-        cout << count++ << endl;
+//        cout << count++ << endl;
 //        frameStart = SDL_GetTicks();
         game->handleEvent();
         game->update();
