@@ -29,7 +29,7 @@ $(NAME): $(OBJECTS) $(HEADERS)
 	@echo "\033[1;32mOctopus is ready\033[0m"
 
 clean:
-	@rm -f *.o
+	@rm -f source/*.o
 	@echo "\033[1;32mObject files were removed\033[0m"
 
 fclean: clean
