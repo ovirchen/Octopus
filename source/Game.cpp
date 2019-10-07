@@ -1,15 +1,13 @@
-//
-// Created by Olga VIRCHENKO on 2019-10-02.
-//
 
 #include "../include/Game.h"
 
 Game::Game() {
     run = true;
     oct = std::make_unique<Octopus>();
-    mouseX = oct->getPosX();
-    mouseY = oct->getPosY();
+    mouseX = static_cast<int>(oct->getPosX());
+    mouseY = static_cast<int>(oct->getPosY());
 }
+
 Game::~Game() {
     SDL_DestroyTexture(texture);
     SDL_DestroyRenderer(renderer);
@@ -39,7 +37,6 @@ void Game::init()
     {
         cout << SDL_GetError() << std::endl;
     }
-
 }
 
 void Game::handleEvent()
@@ -57,17 +54,12 @@ void Game::handleEvent()
     }
 }
 
-void Game::update(){
-
-}
 void Game::render()
 {
 //    cout << "\trender\n";
-//    SDL_RenderClear(renderer);
     oct->update(mouseX, mouseY);
     oct->draw();
 
-//    SDL_RenderPresent(renderer);
 }
 
 SDL_Renderer* Game::getRenderer() {

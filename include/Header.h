@@ -1,13 +1,10 @@
-//
-// Created by Olga VIRCHENKO on 2019-10-02.
-//
 
 #ifndef OCTOPUS_HEADER_H
 #define OCTOPUS_HEADER_H
 
 #define WIN_X 1920
 #define WIN_Y 1080
-#define PI 3.141592
+#define FPS 60
 
 #include "../frameworks/SDL2.framework/Headers/SDL.h"
 #include "../frameworks/SDL2_image.framework/Headers/SDL_image.h"
