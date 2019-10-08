@@ -1,65 +1,61 @@
 
-#include "../include/Octopus.h"
+#include "Octopus.h"
 
 
-Octopus::Octopus() :width{144}, height{81} {
+Octopus::Octopus() : width{144}, height{81} {
     checkPosition(600, 500);
-    mouse_x = static_cast<int>(pos_x);
-    mouse_y = static_cast<int>(pos_y);
-    if (!(image = IMG_Load(R"(./Assets/img/0001.png)"))) {
-        std::cout << SDL_GetError() << std::endl;
-        std::cout << "Try again" << std::endl;
-        exit(1);
-    }
-    destRect.x = pos_x;
-    destRect.y = pos_y;
-    destRect.w = width;
-    destRect.h = height;
-
+    mouseOct.x = static_cast<int>(pos.x);
+    mouseOct.y = static_cast<int>(pos.y);
+    Animation::setDestRect(width, height);
+//    if (!(image = IMG_Load(R"(./Assets/img/0001.png)"))) {
+//        std::cout << SDL_GetError() << std::endl;
+//        std::cout << "Try again" << std::endl;
+//        exit(1);
+//    }
+//    destRect.x = pos.x;
+//    destRect.y = pos.y;
+//    destRect.w = width;
+//    destRect.h = height;
 }
 Octopus::~Octopus() {
-    SDL_FreeSurface(image);
+//    SDL_FreeSurface(image);
 }
 
-void Octopus::setRenderer(SDL_Renderer *render) { renderer = render; }
-int Octopus::getPosX() { return pos_x; }
-int Octopus::getPosY() { return pos_y; }
+//void Octopus::setRenderer(SDL_Renderer *render) { renderer = render; }
+int Octopus::getPosX() { return pos.x; }
+int Octopus::getPosY() { return pos.y; }
 
-void Octopus::update(int mouseX, int mouseY)
+void Octopus::update(coordI mouse)
 {
-    if (mouse_x == mouseX && mouse_y == mouseY)
+    if (mouseOct.x == mouse.x && mouseOct.y == mouse.y)
         return ;
-    mouse_x = mouseX;
-    mouse_y = mouseY;
-    cout << "MOUSE " << mouseX << " " << mouseY << "\n";
-    dest_x = mouseX - width / 2;
-    dest_y = mouseY - height / 2;
+    mouseOct.x = mouse.x;
+    mouseOct.y = mouse.y;
+    dest.x = mouse.x - width / 2;
+    dest.y = mouse.y - height / 2;
     jump();
 }
 
 void Octopus::draw() {
-//        cout << "\tdraw\n";
-        SDL_RenderClear(renderer);
-        destRect.x = pos_x;
-        destRect.y = pos_y;
-        auto local_texture = SDL_CreateTextureFromSurface(renderer, image);
-        SDL_RenderCopy(renderer, local_texture, NULL, &destRect);
-        SDL_RenderPresent(renderer);
-        SDL_DestroyTexture(local_texture);
+    Animation::draw(pos);
+//        SDL_RenderClear(renderer);
+//        destRect.x = pos.x;
+//        destRect.y = pos.y;
+//        auto local_texture = SDL_CreateTextureFromSurface(renderer, image);
+//        SDL_RenderCopy(renderer, local_texture, NULL, &destRect);
+//        SDL_RenderPresent(renderer);
+//        SDL_DestroyTexture(local_texture);
 }
 
 void Octopus::move(int i, double x, double y)
 {
-//    cout << "\tmove\n";
     int         FD = 3000;
     int         frameDelay;
 
-
     frameStart = SDL_GetTicks();
-    pos_x += x;
-    pos_y += y;
+    pos.x += x;
+    pos.y += y;
     draw();
-
     FD += 500 * i / 2;
     frameDelay = FD / FPS;
     frameTime = SDL_GetTicks() - frameStart;
@@ -79,8 +75,8 @@ void Octopus::pushOff(double x, double y)
         frameStart = SDL_GetTicks();
 
         changeImage(10 * i);
-        pos_x += x;
-        pos_y += y;
+        pos.x += x;
+        pos.y += y;
         draw();
 
         frameTime = SDL_GetTicks() - frameStart;
@@ -101,10 +97,9 @@ void Octopus::push(double x, double y)
     x = x / len;
     y = y / len;
     while (++j <= len) {
-
         changeImage(45 + 5 * (j % 2));
-        pos_x += x;
-        pos_y += y;
+        pos.x += x;
+        pos.y += y;
         draw();
     }
     changeImage(40);
@@ -115,55 +110,52 @@ void Octopus::push(double x, double y)
 
 void Octopus::jump()
 {
-//    cout << "\tjump\n";
-    if (dest_x == pos_x && dest_y == pos_y)
+    if (dest.x == pos.x && dest.y == pos.y)
         return;
 
-    int         del_x = 1;
-    int         del_y = 1;
+    coordI      factor;
+    coordD      step;
     int         i = 0;
     int         j = 2;
-    double      way = sqrt(pow(dest_x - pos_x, 2) + pow(dest_y - pos_y, 2));
-    findNextPos();
-    cout << "length " << way << "\n";
-    int         len = way / 20;
-    if (len < 10)
-        len = 10;
-    double      gx = abs(dest_x - pos_x) / len;
-    double      gy = abs(dest_y - pos_y) / len;
-
-    if (pos_x >= dest_x && pos_y >= dest_y) // 1
+    double      way = sqrt(pow(dest.x - pos.x, 2) + pow(dest.y - pos.y, 2));
+    findNextPush();
+    int len = (way / 20) < 10 ? 10 : (way / 20);
+    factor.x = 1;
+    factor.y = 1;
+    step.x = abs(dest.x - pos.x) / len;
+    step.y = abs(dest.y - pos.y) / len;
+    if (pos.x >= dest.x && pos.y >= dest.y) // 1
     {
-        del_x = -1;
-        del_y = -1;
+        factor.x = -1;
+        factor.y = -1;
     }
-    else if (pos_x <= dest_x && pos_y > dest_y) // 2
-        del_y = -1;
-    else if (pos_x > dest_x && pos_y <= dest_y) // 4
-        del_x = -1;
-
-    pushOff(gx * del_x, gy * del_y);
-    while(++i < (len - 1) && ((dest_x - pos_x) * del_x) > 0 &&
-            ((dest_y - pos_y) * del_y) > 0)
+    else if (pos.x <= dest.x && pos.y > dest.y) // 2
+        factor.y = -1;
+    else if (pos.x > dest.x && pos.y <= dest.y) // 4
+        factor.x = -1;
+    step.x *= factor.x;
+    step.y *= factor.y;
+    pushOff(step.x, step.y);
+    while(++i < (len - 1) && ((dest.x - pos.x) * factor.x) > 0 &&
+            ((dest.y - pos.y) * factor.y) > 0)
     {
-        if (((next_x - pos_x) * del_x) <= 0 && ((next_y - pos_y) * del_y) <= 0)
+        if (((nextPush.x - pos.x) * factor.x) <= 0 &&
+                    ((nextPush.y - pos.y) * factor.y) <= 0)
         {
-            push(gx * del_x, gy * del_y);
-            findNextPos();
+            push(step.x, step.y);
+            findNextPush();
             j = 1;
         }
         else
-            move(j, gx * del_x, gy * del_y);
+            move(j, step.x, step.y);
         ++j;
     }
-    landing(gx * del_x, gy * del_y);
-
-    pos_x = dest_x;
-    pos_y = dest_y;
+    landing(step.x, step.y);
+    pos.x = dest.x;
+    pos.y = dest.y;
 }
 
 void Octopus::landing(double x, double y) {
-//    cout << "\tlanding\n";
     const int   frameDelay = 10000 / FPS;
     const int   len = 3;
     int         i = -1;
@@ -174,8 +166,8 @@ void Octopus::landing(double x, double y) {
         frameStart = SDL_GetTicks();
 
         changeImage(45 + 5 * i);
-        pos_x += x;
-        pos_y += y;
+        pos.x += x;
+        pos.y += y;
         draw();
 
         frameTime = SDL_GetTicks() - frameStart;
@@ -184,38 +176,38 @@ void Octopus::landing(double x, double y) {
     }
 }
 
-void Octopus::checkPosition(int xMap, int yMap) {
-    pos_x = xMap - width / 2;
-    pos_y = yMap - height / 2;
-    dest_x = pos_x;
-    dest_y = pos_y;
+void Octopus::checkPosition(int map_x, int map_y) {
+    pos.x = map_x - width / 2;
+    pos.y = map_y - height / 2;
+    dest.x = pos.x;
+    dest.y = pos.y;
 }
 
-void Octopus::changeImage(int i) {
-    std::string str;
+//void Octopus::changeImage(int i) {
+//    std::string str;
+//
+//    if (i < 10) {
+//        str = "./Assets/img/000" + std::to_string(i) + ".png";
+//        SDL_FreeSurface(image);
+//        image = IMG_Load(str.c_str());
+//    }
+//    else
+//    {
+//        str = "./Assets/img/00" + std::to_string(i) + ".png";
+//        SDL_FreeSurface(image);
+//        image = IMG_Load(str.c_str());
+//    }
+//}
 
-    if (i < 10) {
-        str = "./Assets/img/000" + std::to_string(i) + ".png";
-        SDL_FreeSurface(image);
-        image = IMG_Load(str.c_str());
-    }
-    else
-    {
-        str = "./Assets/img/00" + std::to_string(i) + ".png";
-        SDL_FreeSurface(image);
-        image = IMG_Load(str.c_str());
-    }
-}
-
-void Octopus::findNextPos() {
+void Octopus::findNextPush() {
     double t;
 
-    t = (dest_x - pos_x) / (dest_y - pos_y);
+    t = (dest.x - pos.x) / (dest.y - pos.y);
     t = 250 / sqrt(t * t + 1);
-    if (dest_y < pos_y)
-        next_y = pos_y - t;
+    if (dest.y < pos.y)
+        nextPush.y = pos.y - t;
     else
-        next_y = pos_y + t;
-    next_x = (next_y - pos_y) * (dest_x - pos_x) / (dest_y - pos_y) + pos_x;
-    cout << "NEXT STOP " << next_x << " " << next_y << "\n";
+        nextPush.y = pos.y + t;
+    nextPush.x = (nextPush.y - pos.y) * (dest.x - pos.x) / (dest.y - pos.y) + pos.x;
+    cout << "NEXT STOP " << nextPush.x << " " << nextPush.y << "\n";
 }

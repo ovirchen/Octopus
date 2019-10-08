@@ -1,11 +1,11 @@
 
-#include "../include/Game.h"
+#include "Game.h"
 
 Game::Game() {
     run = true;
     oct = std::make_unique<Octopus>();
-    mouseX = static_cast<int>(oct->getPosX());
-    mouseY = static_cast<int>(oct->getPosY());
+    mouse.x = static_cast<int>(oct->getPosX());
+    mouse.y = static_cast<int>(oct->getPosY());
 }
 
 Game::~Game() {
@@ -16,6 +16,8 @@ Game::~Game() {
     IMG_Quit();
     cout << "WINDOW CLEARED\n";
 }
+
+SDL_Renderer* Game::getRenderer() { return renderer; }
 
 void Game::init()
 {
@@ -32,6 +34,7 @@ void Game::init()
             throw std::exception();
         oct->setRenderer(renderer);
         std::cout << "INIT EVERYTHING" << std::endl;
+        oct->draw();
     }
     catch (std::exception e)
     {
@@ -48,20 +51,13 @@ void Game::handleEvent()
             run = false;
         if (event.button.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT)
         {
-            SDL_GetMouseState(&mouseX, &mouseY);
-            cout << "MOUSE " << mouseX << " " << mouseY << "\n";
+            SDL_GetMouseState(&mouse.x, &mouse.y);
+            cout << "MOUSE " << mouse.x << " " << mouse.y << "\n";
         }
     }
 }
 
 void Game::render()
 {
-//    cout << "\trender\n";
-    oct->update(mouseX, mouseY);
-    oct->draw();
-
-}
-
-SDL_Renderer* Game::getRenderer() {
-    return renderer;
+    oct->update(mouse);
 }

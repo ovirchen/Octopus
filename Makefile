@@ -1,21 +1,20 @@
 
 NAME = Octopus
 
-SOURCES = source/main.cpp source/Game.cpp source/Octopus.cpp
+SOURCES = source/main.cpp source/Game.cpp source/Octopus.cpp source/Animation.cpp
 
 OBJECTS = $(SOURCES:.cpp=.o)
 
 FLAGS = -framework OpenGL -framework AppKit -std=c++14
 
-INCLUDES = 		-I frameworks/SDL2.framework/Versions/A/Headers \
-				-I frameworks/SDL2_ttf.framework/Versions/A/Headers \
+INCLUDES = 		-I include/ \
+                -I frameworks/SDL2.framework/Versions/A/Headers \
 				-I frameworks/SDL2_image.framework/Versions/A/Headers \
-				-I frameworks/SDL2_mixer.framework/Versions/A/Headers \
 				-F ./frameworks
 
 FRAMEWORKS	=	-F ./frameworks \
 				-rpath @loader_path/frameworks \
-				-framework SDL2 -framework SDL2_image -framework SDL2_ttf -framework SDL2_mixer
+				-framework SDL2 -framework SDL2_image
 
 HEADERS = include/*.h
 

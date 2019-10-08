@@ -15,6 +15,19 @@
 #include <memory>
 #include <cmath>
 
+struct  coordD
+{
+    double x;
+    double y;
+};
+
+struct  coordI
+{
+    int x;
+    int y;
+};
+
+//#include "Animation.h"
 #include "Octopus.h"
 #include "Game.h"
 
