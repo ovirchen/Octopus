@@ -1,7 +1,9 @@
 
 NAME = Octopus
 
-SOURCES = source/main.cpp source/Game.cpp source/Octopus.cpp source/Animation.cpp
+SOURCES = source/main.cpp source/Game.cpp \
+            source/Octopus.cpp source/Draw.cpp \
+            source/Move.cpp
 
 OBJECTS = $(SOURCES:.cpp=.o)
 

@@ -1,6 +1,9 @@
 
 #include "Game.h"
 
+#define WIN_X 1920
+#define WIN_Y 1080
+
 Game::Game() {
     run = true;
     oct = std::make_unique<Octopus>();
@@ -34,7 +37,7 @@ void Game::init()
             throw std::exception();
         oct->setRenderer(renderer);
         std::cout << "INIT EVERYTHING" << std::endl;
-        oct->draw();
+        oct->display(0, 0, 1);
     }
     catch (std::exception e)
     {

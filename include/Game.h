@@ -3,9 +3,11 @@
 #define OCTOPUS_GAME_H
 
 #include "Header.h"
+#include "Octopus.h"
+
+
 
 class Octopus;
-
 
 class Game {
 
@@ -21,12 +23,12 @@ public:
     void            render();
 
 private:
-    coordI          mouse;
-    SDL_Window      *win;
-    SDL_Renderer    *renderer;
-    SDL_Texture	    *texture;
-    SDL_Event	    event;
-    std::unique_ptr<Octopus> oct;
+    coordI                      mouse;
+    SDL_Window                  *win;
+    SDL_Renderer                *renderer;
+    SDL_Texture	                *texture;
+    SDL_Event	                event;
+    std::unique_ptr<Octopus>    oct;
 
 };
 

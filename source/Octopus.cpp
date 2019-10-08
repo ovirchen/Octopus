@@ -1,27 +1,14 @@
 
 #include "Octopus.h"
 
-
-Octopus::Octopus() : width{144}, height{81} {
+Octopus::Octopus() {
     checkPosition(600, 500);
     mouseOct.x = static_cast<int>(pos.x);
     mouseOct.y = static_cast<int>(pos.y);
-    Animation::setDestRect(width, height);
-//    if (!(image = IMG_Load(R"(./Assets/img/0001.png)"))) {
-//        std::cout << SDL_GetError() << std::endl;
-//        std::cout << "Try again" << std::endl;
-//        exit(1);
-//    }
-//    destRect.x = pos.x;
-//    destRect.y = pos.y;
-//    destRect.w = width;
-//    destRect.h = height;
 }
 Octopus::~Octopus() {
-//    SDL_FreeSurface(image);
 }
 
-//void Octopus::setRenderer(SDL_Renderer *render) { renderer = render; }
 int Octopus::getPosX() { return pos.x; }
 int Octopus::getPosY() { return pos.y; }
 
@@ -31,81 +18,33 @@ void Octopus::update(coordI mouse)
         return ;
     mouseOct.x = mouse.x;
     mouseOct.y = mouse.y;
-    dest.x = mouse.x - width / 2;
-    dest.y = mouse.y - height / 2;
+    dest.x = mouse.x - getWidth() / 2;
+    dest.y = mouse.y - getHeight() / 2;
     jump();
 }
 
-void Octopus::draw() {
-    Animation::draw(pos);
-//        SDL_RenderClear(renderer);
-//        destRect.x = pos.x;
-//        destRect.y = pos.y;
-//        auto local_texture = SDL_CreateTextureFromSurface(renderer, image);
-//        SDL_RenderCopy(renderer, local_texture, NULL, &destRect);
-//        SDL_RenderPresent(renderer);
-//        SDL_DestroyTexture(local_texture);
-}
-
-void Octopus::move(int i, double x, double y)
+void Octopus::move(coordI factor, coordD step, int len)
 {
-    int         FD = 3000;
-    int         frameDelay;
-
-    frameStart = SDL_GetTicks();
-    pos.x += x;
-    pos.y += y;
-    draw();
-    FD += 500 * i / 2;
-    frameDelay = FD / FPS;
-    frameTime = SDL_GetTicks() - frameStart;
-    if (frameDelay > frameTime)
-        SDL_Delay(frameDelay - frameTime);
-}
-
-void Octopus::pushOff(double x, double y)
-{
-    const int   frameDelay = 15000 / FPS;
-    const int   len = 3;
-
     int i = 0;
-    x = x / len;
-    y = y / len;
-    while (++i <= len) {
-        frameStart = SDL_GetTicks();
+    int j = 2;
 
-        changeImage(10 * i);
-        pos.x += x;
-        pos.y += y;
-        draw();
-
-        frameTime = SDL_GetTicks() - frameStart;
-        if (frameDelay > frameTime)
-            SDL_Delay(frameDelay - frameTime);
+    findNextPush();
+    pushOff(step.x, step.y);
+    while(++i < (len - 1) && ((dest.x - pos.x) * factor.x) > 0 &&
+          ((dest.y - pos.y) * factor.y) > 0)
+    {
+        if (((nextPush.x - pos.x) * factor.x) <= 0 &&
+            ((nextPush.y - pos.y) * factor.y) <= 0)
+        {
+            push(step.x, step.y);
+            findNextPush();
+            j = 1;
+        }
+        else
+            pull(j, step.x, step.y);
+        ++j;
     }
-    changeImage(40);
-}
-
-void Octopus::push(double x, double y)
-{
-    int         FD = 10000;
-    int         frameDelay = FD / FPS;
-    const int   len = 3;
-    int         j = 0;
-
-    frameStart = SDL_GetTicks();
-    x = x / len;
-    y = y / len;
-    while (++j <= len) {
-        changeImage(45 + 5 * (j % 2));
-        pos.x += x;
-        pos.y += y;
-        draw();
-    }
-    changeImage(40);
-    frameTime = SDL_GetTicks() - frameStart;
-    if (frameDelay > frameTime)
-        SDL_Delay(frameDelay - frameTime);
+    landing(step.x, step.y);
 }
 
 void Octopus::jump()
@@ -113,91 +52,32 @@ void Octopus::jump()
     if (dest.x == pos.x && dest.y == pos.y)
         return;
 
-    coordI      factor;
-    coordD      step;
-    int         i = 0;
-    int         j = 2;
-    double      way = sqrt(pow(dest.x - pos.x, 2) + pow(dest.y - pos.y, 2));
-    findNextPush();
+    double way = sqrt(pow(dest.x - pos.x, 2) + pow(dest.y - pos.y, 2));
     int len = (way / 20) < 10 ? 10 : (way / 20);
-    factor.x = 1;
-    factor.y = 1;
+    coordD step;
     step.x = abs(dest.x - pos.x) / len;
     step.y = abs(dest.y - pos.y) / len;
+    coordI factor;
+    factor.x = factor.y = 1;
     if (pos.x >= dest.x && pos.y >= dest.y) // 1
-    {
-        factor.x = -1;
-        factor.y = -1;
-    }
+        factor.x = factor.y = -1;
     else if (pos.x <= dest.x && pos.y > dest.y) // 2
         factor.y = -1;
     else if (pos.x > dest.x && pos.y <= dest.y) // 4
         factor.x = -1;
     step.x *= factor.x;
     step.y *= factor.y;
-    pushOff(step.x, step.y);
-    while(++i < (len - 1) && ((dest.x - pos.x) * factor.x) > 0 &&
-            ((dest.y - pos.y) * factor.y) > 0)
-    {
-        if (((nextPush.x - pos.x) * factor.x) <= 0 &&
-                    ((nextPush.y - pos.y) * factor.y) <= 0)
-        {
-            push(step.x, step.y);
-            findNextPush();
-            j = 1;
-        }
-        else
-            move(j, step.x, step.y);
-        ++j;
-    }
-    landing(step.x, step.y);
+    move(factor, step, len);
     pos.x = dest.x;
     pos.y = dest.y;
 }
 
-void Octopus::landing(double x, double y) {
-    const int   frameDelay = 10000 / FPS;
-    const int   len = 3;
-    int         i = -1;
-
-    x = x / len;
-    y = y / len;
-    while (++i < len) {
-        frameStart = SDL_GetTicks();
-
-        changeImage(45 + 5 * i);
-        pos.x += x;
-        pos.y += y;
-        draw();
-
-        frameTime = SDL_GetTicks() - frameStart;
-        if (frameDelay > frameTime)
-            SDL_Delay(frameDelay - frameTime);
-    }
-}
-
 void Octopus::checkPosition(int map_x, int map_y) {
-    pos.x = map_x - width / 2;
-    pos.y = map_y - height / 2;
+    pos.x = map_x - getWidth() / 2;
+    pos.y = map_y - getHeight() / 2;
     dest.x = pos.x;
     dest.y = pos.y;
 }
-
-//void Octopus::changeImage(int i) {
-//    std::string str;
-//
-//    if (i < 10) {
-//        str = "./Assets/img/000" + std::to_string(i) + ".png";
-//        SDL_FreeSurface(image);
-//        image = IMG_Load(str.c_str());
-//    }
-//    else
-//    {
-//        str = "./Assets/img/00" + std::to_string(i) + ".png";
-//        SDL_FreeSurface(image);
-//        image = IMG_Load(str.c_str());
-//    }
-//}
 
 void Octopus::findNextPush() {
     double t;
@@ -210,4 +90,11 @@ void Octopus::findNextPush() {
         nextPush.y = pos.y + t;
     nextPush.x = (nextPush.y - pos.y) * (dest.x - pos.x) / (dest.y - pos.y) + pos.x;
     cout << "NEXT STOP " << nextPush.x << " " << nextPush.y << "\n";
+}
+
+void Octopus::display(double x, double y, int i) {
+    pos.x += x;
+    pos.y += y;
+    changeImage(i);
+    Draw::draw(pos);
 }

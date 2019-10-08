@@ -409,7 +409,7 @@ struct WebPBitstreamFeatures {
   int width;          // Width in pixels, as read from the bitstream.
   int height;         // Height in pixels, as read from the bitstream.
   int has_alpha;      // True if the bitstream contains an alpha channel.
-  int has_animation;  // True if the bitstream is an animation.
+  int has_Draw;  // True if the bitstream is an Draw.
   int format;         // 0 = undefined (/mixed), 1 = lossy, 2 = lossless
 
   uint32_t pad[5];    // padding for later use

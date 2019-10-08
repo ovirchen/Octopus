@@ -2,9 +2,10 @@
 #ifndef OCTOPUS_OCTOPUS_H
 #define OCTOPUS_OCTOPUS_H
 
-#include "Animation.h"
+#include "Draw.h"
+#include "Move.h"
 
-class Octopus : public Animation {
+class Octopus : public Draw, public Move {
 
 public:
     Octopus();
@@ -12,16 +13,11 @@ public:
 
     int     getPosX();
     int     getPosY();
-//    void    setRenderer(SDL_Renderer *render);
     void    update(coordI mouse);
-    void    draw();
-    void    move(int i, double x, double y);
-    void    pushOff(double x, double y);
-    void    push(double x, double y);
+    void    display(double x, double y, int i);
+    void    move(coordI factor, coordD step, int len);
     void    jump();
-    void    landing(double x, double y);
     void    checkPosition(int map_x, int map_y);
-//    void    changeImage(int i);
     void    findNextPush();
 
 private:
@@ -29,13 +25,6 @@ private:
     coordD          dest;
     coordD          nextPush;
     coordI          mouseOct;
-    int             width;
-    int             height;
-//    SDL_Surface     *image;
-//    SDL_Rect        destRect;
-//    SDL_Renderer    *renderer;
-    Uint32          frameStart;
-    int             frameTime;
 };
 
 #endif //OCTOPUS_OCTOPUS_H

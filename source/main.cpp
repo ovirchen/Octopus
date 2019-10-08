@@ -1,5 +1,6 @@
 
-#include "../include/Header.h"
+#include "Header.h"
+#include "Game.h"
 
 
 int main(int, char**) {
