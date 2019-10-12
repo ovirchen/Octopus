@@ -89,7 +89,6 @@ void Octopus::findNextPush() {
     else
         nextPush.y = pos.y + t;
     nextPush.x = (nextPush.y - pos.y) * (dest.x - pos.x) / (dest.y - pos.y) + pos.x;
-    cout << "NEXT STOP " << nextPush.x << " " << nextPush.y << "\n";
 }
 
 void Octopus::display(double x, double y, int i) {

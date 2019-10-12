@@ -55,7 +55,7 @@ void Game::handleEvent()
         if (event.button.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT)
         {
             SDL_GetMouseState(&mouse.x, &mouse.y);
-            cout << "MOUSE " << mouse.x << " " << mouse.y << "\n";
+//            cout << "MOUSE " << mouse.x << " " << mouse.y << "\n";
         }
     }
 }
